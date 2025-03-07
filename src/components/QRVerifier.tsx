@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { QrCode, Search, Check, X, AlertCircle } from 'lucide-react';
+import { QrCode, Search, Check, X, AlertCircle, CreditCard } from 'lucide-react';
 import { verifyTicket } from '@/utils/ticketUtils';
 
 interface TicketData {
@@ -13,6 +13,7 @@ interface TicketData {
   quantity: number;
   purchaseDate: string;
   validationCode: string;
+  paymentId?: string;
 }
 
 const QRVerifier: React.FC = () => {
@@ -42,6 +43,7 @@ const QRVerifier: React.FC = () => {
         quantity: 1,
         purchaseDate: new Date().toISOString(),
         validationCode: '123456',
+        paymentId: 'pay_123456789',
       };
       
       const verification = verifyTicket(demoTicketData);
@@ -128,6 +130,12 @@ const QRVerifier: React.FC = () => {
                 <p>Ticket ID: {scanResult.ticketData.id}</p>
                 <p>Type: {scanResult.ticketData.ticketType === 'stag' ? 'Single Entry' : 'Couple Entry'}</p>
                 <p>Quantity: {scanResult.ticketData.quantity}</p>
+                {scanResult.ticketData.paymentId && (
+                  <p className="flex items-center">
+                    <CreditCard className="w-4 h-4 mr-1" />
+                    Payment ID: {scanResult.ticketData.paymentId}
+                  </p>
+                )}
               </div>
             </div>
           )}

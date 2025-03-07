@@ -10,6 +10,7 @@ interface TicketData {
   quantity: number;
   purchaseDate: string;
   validationCode: string;
+  paymentId?: string;
 }
 
 // Generate a unique ticket ID
@@ -62,7 +63,7 @@ export const sendTicketEmail = async (email: string, name: string, qrCodeDataUrl
   // In a real implementation, this would connect to an email service API
   // For demonstration, we'll simulate a successful email send
   
-  console.log(`Email sent to ${email} with ticket QR code`);
+  console.log(`Email sent to ${email} with ticket QR code and payment ID: ${ticketData.paymentId}`);
   
   // Simulate API call delay
   await new Promise(resolve => setTimeout(resolve, 1000));

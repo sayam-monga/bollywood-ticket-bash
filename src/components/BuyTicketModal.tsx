@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, CreditCard, Calendar, Users, Ticket, AlertCircle, Mail } from 'lucide-react';
 import { toast } from 'sonner';
 import { generateTicketId, generateValidationCode, generateQRCode, sendTicketEmail } from '@/utils/ticketUtils';
+import { initializeRazorpay, RazorpayResponse } from '@/services/RazorpayService';
 
 interface TicketOption {
   type: 'stag' | 'couple';
@@ -57,7 +58,6 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ ticket, onClose }) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     
-    // Clear error when user types
     if (errors[name]) {
       setErrors(prev => {
         const newErrors = { ...prev };
@@ -69,9 +69,63 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ ticket, onClose }) => {
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
-    // Only allow quantity between 1 and 10
     if (value >= 1 && value <= 10) {
       setFormData(prev => ({ ...prev, quantity: value }));
+    }
+  };
+
+  const handlePaymentSuccess = async (response: RazorpayResponse) => {
+    try {
+      console.log('Payment successful:', response);
+      
+      const ticketId = generateTicketId();
+      const validationCode = generateValidationCode();
+      const purchaseDate = new Date().toISOString();
+      
+      const ticketData = {
+        id: ticketId,
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        ticketType: ticket.type,
+        quantity: formData.quantity,
+        purchaseDate,
+        validationCode,
+        paymentId: response.razorpay_payment_id,
+      };
+      
+      const qrCodeDataUrl = await generateQRCode(ticketData);
+      
+      toast.success('Payment successful!', {
+        duration: 3000,
+        position: 'top-center',
+      });
+      
+      setIsSendingEmail(true);
+      const emailSent = await sendTicketEmail(formData.email, formData.name, qrCodeDataUrl, ticketData);
+      setIsSendingEmail(false);
+      
+      if (emailSent) {
+        toast.success('Ticket sent to your email!', {
+          duration: 5000,
+          position: 'top-center',
+          icon: <Mail className="w-5 h-5" />,
+        });
+      } else {
+        toast.error('Error sending ticket email. Please contact support.', {
+          duration: 5000,
+          position: 'top-center',
+        });
+      }
+      
+      onClose();
+    } catch (error) {
+      console.error('Error processing payment confirmation:', error);
+      setIsProcessing(false);
+      toast.error('Error confirming payment. Please contact support.', {
+        duration: 5000,
+        position: 'top-center',
+      });
     }
   };
 
@@ -82,54 +136,31 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ ticket, onClose }) => {
       setIsProcessing(true);
       
       try {
-        // Simulate payment processing
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        // Generate ticket data
-        const ticketId = generateTicketId();
-        const validationCode = generateValidationCode();
-        const purchaseDate = new Date().toISOString();
-        
-        const ticketData = {
-          id: ticketId,
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          ticketType: ticket.type,
-          quantity: formData.quantity,
-          purchaseDate,
-          validationCode,
+        const options = {
+          key: 'rzp_test_YOUR_KEY_HERE',
+          amount: totalAmount * 100,
+          name: 'Bollywood Night',
+          description: `${ticket.title} x ${formData.quantity}`,
+          prefill: {
+            name: formData.name,
+            email: formData.email,
+            contact: formData.phone,
+          },
+          theme: {
+            color: '#D4AF37',
+          },
+          handler: (response: RazorpayResponse) => {
+            handlePaymentSuccess(response);
+          },
+          modal: {
+            ondismiss: () => {
+              setIsProcessing(false);
+              console.log('Payment cancelled by user');
+            }
+          }
         };
         
-        // Generate QR code
-        const qrCodeDataUrl = await generateQRCode(ticketData);
-        
-        // Payment successful
-        setIsProcessing(false);
-        toast.success('Payment successful!', {
-          duration: 3000,
-          position: 'top-center',
-        });
-        
-        // Send email with QR code
-        setIsSendingEmail(true);
-        const emailSent = await sendTicketEmail(formData.email, formData.name, qrCodeDataUrl, ticketData);
-        setIsSendingEmail(false);
-        
-        if (emailSent) {
-          toast.success('Ticket sent to your email!', {
-            duration: 5000,
-            position: 'top-center',
-            icon: <Mail className="w-5 h-5" />,
-          });
-        } else {
-          toast.error('Error sending ticket email. Please contact support.', {
-            duration: 5000,
-            position: 'top-center',
-          });
-        }
-        
-        onClose();
+        await initializeRazorpay(options);
       } catch (error) {
         console.error('Error processing payment:', error);
         setIsProcessing(false);
@@ -157,7 +188,6 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ ticket, onClose }) => {
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="relative p-6 border-b border-white/10">
           <div className="flex items-center">
             <Ticket className="w-6 h-6 text-bollywood-gold mr-3" />
@@ -171,7 +201,6 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ ticket, onClose }) => {
           </button>
         </div>
 
-        {/* Ticket summary */}
         <div className="p-6 bg-white/5">
           <div className="flex justify-between items-center">
             <div>
@@ -188,7 +217,6 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ ticket, onClose }) => {
           </div>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="p-6">
           <div className="space-y-4">
             <div>
@@ -261,7 +289,6 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ ticket, onClose }) => {
             </div>
           </div>
           
-          {/* Payment summary */}
           <div className="mt-6 p-4 rounded-lg bg-white/5 border border-white/10">
             <div className="flex justify-between text-white/80 mb-2">
               <span>{ticket.title} × {formData.quantity}</span>
@@ -273,7 +300,6 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ ticket, onClose }) => {
             </div>
           </div>
 
-          {/* Submit button */}
           <motion.button
             type="submit"
             disabled={isProcessing}
@@ -292,7 +318,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ ticket, onClose }) => {
             ) : (
               <>
                 <CreditCard className="w-5 h-5 mr-2" />
-                Pay with PhonePe ₹{totalAmount}
+                Pay with Razorpay ₹{totalAmount}
               </>
             )}
           </motion.button>
