@@ -1,0 +1,20 @@
+
+<svg width="800" height="800" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g opacity="0.08">
+    <circle cx="400" cy="400" r="200" stroke="#FFFFFF" stroke-width="2"/>
+    <circle cx="400" cy="400" r="300" stroke="#FFFFFF" stroke-width="2"/>
+    <circle cx="400" cy="400" r="400" stroke="#FFFFFF" stroke-width="2"/>
+    <path d="M400 0V800" stroke="#FFFFFF" stroke-width="2"/>
+    <path d="M0 400H800" stroke="#FFFFFF" stroke-width="2"/>
+    <path d="M115.5 115.5L684.5 684.5" stroke="#FFFFFF" stroke-width="2"/>
+    <path d="M684.5 115.5L115.5 684.5" stroke="#FFFFFF" stroke-width="2"/>
+    
+    <path d="M450 100L500 200L400 250L300 200L350 100L450 100Z" fill="#FFFFFF" fill-opacity="0.1"/>
+    <path d="M650 350L750 400L700 500L600 550L550 450L650 350Z" fill="#FFFFFF" fill-opacity="0.1"/>
+    <path d="M450 600L500 700L400 750L300 700L350 600L450 600Z" fill="#FFFFFF" fill-opacity="0.1"/>
+    <path d="M150 350L250 400L200 500L100 550L50 450L150 350Z" fill="#FFFFFF" fill-opacity="0.1"/>
+    
+    <circle cx="400" cy="400" r="50" fill="#FFFFFF" fill-opacity="0.1"/>
+    <circle cx="400" cy="400" r="48" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+</svg>
