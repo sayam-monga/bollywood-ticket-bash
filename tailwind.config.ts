@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -26,14 +25,14 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         
-        // Bollywood theme colors
+        // Minimal bollywood theme colors
         bollywood: {
           red: "#E50914",
-          gold: "#FFD700",
-          purple: "#9932CC",
-          turquoise: "#30D5C8",
-          deep: "#800020",
-          accent: "#FF4500",
+          gold: "#CCCCCC",
+          purple: "#777777",
+          turquoise: "#999999",
+          deep: "#555555",
+          accent: "#333333",
         },
         
         primary: {
@@ -81,8 +80,7 @@ export default {
         sm: "calc(var(--radius) - 4px)"
       },
       fontFamily: {
-        bollywood: ['Montserrat', 'sans-serif'],
-        display: ['Playfair Display', 'serif'],
+        sans: ['Inter', 'sans-serif'],
       },
       keyframes: {
         "accordion-down": {
@@ -129,13 +127,13 @@ export default {
         "ticket-flip": "ticket-flip 0.6s ease-out",
       },
       backgroundImage: {
-        "bollywood-gradient": "linear-gradient(to right, #E50914, #FFD700)",
-        "gold-shimmer": "linear-gradient(90deg, rgba(255,215,0,0) 0%, rgba(255,215,0,0.8) 50%, rgba(255,215,0,0) 100%)",
+        "bollywood-gradient": "linear-gradient(to right, #333, #999)",
+        "gold-shimmer": "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%)",
         "ticket-texture": "url('/assets/ticket-texture.svg')",
       },
       boxShadow: {
-        "gold": "0 4px 12px rgba(255, 215, 0, 0.3)",
-        "neon": "0 0 5px rgba(255, 255, 255, 0.8), 0 0 10px rgba(255, 255, 255, 0.5), 0 0 15px rgba(229, 9, 20, 0.5), 0 0 20px rgba(229, 9, 20, 0.4)",
+        "gold": "0 4px 12px rgba(0, 0, 0, 0.2)",
+        "neon": "0 0 5px rgba(255, 255, 255, 0.1)",
       },
     },
   },

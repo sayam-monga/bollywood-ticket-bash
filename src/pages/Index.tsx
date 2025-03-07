@@ -17,9 +17,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden">
-      {/* Progress bar */}
+      {/* Minimal progress bar */}
       <motion.div 
-        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-bollywood-red via-bollywood-gold to-bollywood-purple z-50"
+        className="fixed top-0 left-0 right-0 h-1 bg-white z-50"
         style={{ scaleX: scrollYProgress, transformOrigin: "0%" }}
       />
 

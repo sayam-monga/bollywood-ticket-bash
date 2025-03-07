@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, CreditCard, Calendar, Users, Ticket, AlertCircle } from 'lucide-react';
+import { X, CreditCard, Calendar, Users, Ticket, AlertCircle, Mail } from 'lucide-react';
 import { toast } from 'sonner';
+import { generateTicketId, generateValidationCode, generateQRCode, sendTicketEmail } from '@/utils/ticketUtils';
 
 interface TicketOption {
   type: 'stag' | 'couple';
@@ -26,6 +26,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ ticket, onClose }) => {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
 
   const totalAmount = ticket.price * formData.quantity;
 
@@ -74,21 +75,69 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ ticket, onClose }) => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (validateForm()) {
       setIsProcessing(true);
       
-      // Simulate PhonePe integration
-      setTimeout(() => {
+      try {
+        // Simulate payment processing
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // Generate ticket data
+        const ticketId = generateTicketId();
+        const validationCode = generateValidationCode();
+        const purchaseDate = new Date().toISOString();
+        
+        const ticketData = {
+          id: ticketId,
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          ticketType: ticket.type,
+          quantity: formData.quantity,
+          purchaseDate,
+          validationCode,
+        };
+        
+        // Generate QR code
+        const qrCodeDataUrl = await generateQRCode(ticketData);
+        
+        // Payment successful
         setIsProcessing(false);
-        toast.success('Payment successful! Tickets will be sent to your email.', {
+        toast.success('Payment successful!', {
+          duration: 3000,
+          position: 'top-center',
+        });
+        
+        // Send email with QR code
+        setIsSendingEmail(true);
+        const emailSent = await sendTicketEmail(formData.email, formData.name, qrCodeDataUrl, ticketData);
+        setIsSendingEmail(false);
+        
+        if (emailSent) {
+          toast.success('Ticket sent to your email!', {
+            duration: 5000,
+            position: 'top-center',
+            icon: <Mail className="w-5 h-5" />,
+          });
+        } else {
+          toast.error('Error sending ticket email. Please contact support.', {
+            duration: 5000,
+            position: 'top-center',
+          });
+        }
+        
+        onClose();
+      } catch (error) {
+        console.error('Error processing payment:', error);
+        setIsProcessing(false);
+        toast.error('Payment failed. Please try again.', {
           duration: 5000,
           position: 'top-center',
         });
-        onClose();
-      }, 2000);
+      }
     }
   };
 
