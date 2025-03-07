@@ -1,4 +1,3 @@
-
 import { 
   motion, 
   MotionProps, 
@@ -217,12 +216,12 @@ export const useParallax = (value: number) => {
 // Text reveal animation
 export const RevealText = ({ 
   children,
-  delay = 0, 
+  delay = 0,
   ...props 
-}: MotionProps & { 
+}: { 
   children: React.ReactNode;
   delay?: number;
-}) => {
+} & Omit<React.HTMLAttributes<HTMLSpanElement>, 'children'>) => {
   const textVariants = {
     hidden: { opacity: 0 },
     visible: (i: number) => ({
