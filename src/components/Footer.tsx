@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Ticket, Instagram, Facebook, Twitter, Mail, Phone } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -72,7 +73,7 @@ const Footer = () => {
               <h3 className="text-xl font-bold text-white mb-6">Quick Links</h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="#" className="text-white/70 hover:text-bollywood-gold transition-colors duration-200">Home</a>
+                  <Link to="/" className="text-white/70 hover:text-bollywood-gold transition-colors duration-200">Home</Link>
                 </li>
                 <li>
                   <a href="#tickets" className="text-white/70 hover:text-bollywood-gold transition-colors duration-200">Tickets</a>
@@ -81,13 +82,16 @@ const Footer = () => {
                   <a href="#location" className="text-white/70 hover:text-bollywood-gold transition-colors duration-200">Location</a>
                 </li>
                 <li>
-                  <a href="#contact" className="text-white/70 hover:text-bollywood-gold transition-colors duration-200">Contact</a>
+                  <Link to="/contact" className="text-white/70 hover:text-bollywood-gold transition-colors duration-200">Contact</Link>
                 </li>
                 <li>
-                  <a href="#" className="text-white/70 hover:text-bollywood-gold transition-colors duration-200">Terms & Conditions</a>
+                  <Link to="/terms" className="text-white/70 hover:text-bollywood-gold transition-colors duration-200">Terms & Conditions</Link>
                 </li>
                 <li>
-                  <a href="#" className="text-white/70 hover:text-bollywood-gold transition-colors duration-200">Privacy Policy</a>
+                  <Link to="/privacy-policy" className="text-white/70 hover:text-bollywood-gold transition-colors duration-200">Privacy Policy</Link>
+                </li>
+                <li>
+                  <Link to="/refund-policy" className="text-white/70 hover:text-bollywood-gold transition-colors duration-200">Refund Policy</Link>
                 </li>
               </ul>
             </div>
@@ -113,13 +117,15 @@ const Footer = () => {
               </ul>
               
               <div className="mt-8">
-                <motion.button
-                  className="bollywood-button"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  Get In Touch
-                </motion.button>
+                <Link to="/contact">
+                  <motion.button
+                    className="bollywood-button"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    Get In Touch
+                  </motion.button>
+                </Link>
               </div>
             </div>
           </div>

@@ -4,17 +4,19 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Menu, X, Ticket } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Link } from 'react-router-dom';
 
 interface NavItem {
   name: string;
   href: string;
+  isExternal?: boolean;
 }
 
 const navItems: NavItem[] = [
-  { name: 'Home', href: '#' },
+  { name: 'Home', href: '/' },
   { name: 'Tickets', href: '#tickets' },
   { name: 'Location', href: '#location' },
-  { name: 'Contact', href: '#contact' },
+  { name: 'Contact', href: '/contact' },
 ];
 
 const Navbar = () => {
@@ -31,6 +33,31 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const renderNavLink = (item: NavItem, index: number, isMobileView: boolean = false) => {
+    const LinkComponent = item.isExternal !== true && !item.href.startsWith('#') 
+      ? (props: any) => <Link to={item.href} {...props} />
+      : (props: any) => <a href={item.href} {...props} />;
+
+    return (
+      <motion.li 
+        key={item.name}
+        initial={{ opacity: 0, x: isMobileView ? -20 : 0, y: isMobileView ? 0 : -10 }}
+        animate={{ opacity: 1, x: 0, y: 0 }}
+        transition={{ 
+          delay: isMobileView ? 0.1 * index : 0.1 * index + 0.3, 
+          duration: isMobileView ? 0.3 : 0.5 
+        }}
+      >
+        <LinkComponent 
+          className={`text-white hover:text-bollywood-gold transition-colors duration-300 ${isMobileView ? 'block py-2 text-lg' : 'font-medium'}`}
+          onClick={isMobileView ? () => setIsMobileMenuOpen(false) : undefined}
+        >
+          {item.name}
+        </LinkComponent>
+      </motion.li>
+    );
+  };
 
   return (
     <motion.nav
@@ -54,30 +81,18 @@ const Navbar = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
-          <Ticket className="h-8 w-8 text-bollywood-gold mr-2" />
-          <span className="font-display text-2xl font-bold bg-gradient-to-r from-bollywood-red to-bollywood-gold bg-clip-text text-transparent">
-            Bollywood Bash
-          </span>
+          <Link to="/" className="flex items-center">
+            <Ticket className="h-8 w-8 text-bollywood-gold mr-2" />
+            <span className="font-display text-2xl font-bold bg-gradient-to-r from-bollywood-red to-bollywood-gold bg-clip-text text-transparent">
+              Bollywood Bash
+            </span>
+          </Link>
         </motion.div>
 
         {/* Desktop Navigation */}
         {!isMobile && (
           <ul className="flex gap-8 items-center">
-            {navItems.map((item, index) => (
-              <motion.li 
-                key={item.name}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * index + 0.3, duration: 0.5 }}
-              >
-                <a 
-                  href={item.href}
-                  className="text-white hover:text-bollywood-gold transition-colors duration-300 font-medium"
-                >
-                  {item.name}
-                </a>
-              </motion.li>
-            ))}
+            {navItems.map((item, index) => renderNavLink(item, index))}
             <motion.li
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -123,26 +138,55 @@ const Navbar = () => {
           >
             <div className="container mx-auto px-4 py-4">
               <ul className="flex flex-col gap-4">
-                {navItems.map((item, index) => (
-                  <motion.li 
-                    key={item.name}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 * index, duration: 0.3 }}
-                  >
-                    <a 
-                      href={item.href}
-                      className="text-white hover:text-bollywood-gold transition-colors block py-2 text-lg"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      {item.name}
-                    </a>
-                  </motion.li>
-                ))}
-                <motion.li
+                {navItems.map((item, index) => renderNavLink(item, index, true))}
+                
+                {/* Additional pages in mobile menu */}
+                <motion.li 
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.5, duration: 0.3 }}
+                >
+                  <Link 
+                    to="/terms" 
+                    className="text-white/70 hover:text-bollywood-gold transition-colors block py-2 text-lg"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Terms & Conditions
+                  </Link>
+                </motion.li>
+                
+                <motion.li 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.6, duration: 0.3 }}
+                >
+                  <Link 
+                    to="/privacy-policy" 
+                    className="text-white/70 hover:text-bollywood-gold transition-colors block py-2 text-lg"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Privacy Policy
+                  </Link>
+                </motion.li>
+                
+                <motion.li 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.7, duration: 0.3 }}
+                >
+                  <Link 
+                    to="/refund-policy" 
+                    className="text-white/70 hover:text-bollywood-gold transition-colors block py-2 text-lg"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Refund Policy
+                  </Link>
+                </motion.li>
+                
+                <motion.li
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.8, duration: 0.3 }}
                   className="mt-4"
                 >
                   <a 
